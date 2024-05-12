@@ -8,6 +8,11 @@ IncludeFile "server management.pbi"
 
 Define Title$ = "Synoptique Maker", ServerEvent, ClientID
 
+If Not loadSettings()
+  MessageRequester(Title$,"Error : unable to load settings",#PB_MessageRequester_Error)
+  End
+EndIf
+
 If CreateNetworkServer(0, Port, #PB_Network_IPv4 | #PB_Network_TCP, "127.0.0.1")
   If connect()
     If OpenConsole(Title$)
@@ -40,7 +45,6 @@ Else
   MessageRequester(Title$,"Error: can't create the server (port "+Port+" in use ?).",#PB_MessageRequester_Error)
 EndIf
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 9
-; FirstLine = 2
+; CursorPosition = 13
 ; EnableXP
 ; DPIAware
