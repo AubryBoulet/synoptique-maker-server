@@ -23,8 +23,9 @@ Declare register(datas)
 Declare valideAccount(datas)
 Declare login(datas)
 Declare sendNewMail(datas)
+Declare checkValidToken(datas)
 
-Global Dim AllowedRoutes.route(5)
+Global Dim AllowedRoutes.route(20)
 With AllowedRoutes(0)
   \methode = "GET"
   \url = "/"
@@ -61,6 +62,12 @@ With AllowedRoutes(5)
   \function = @sendNewMail()
 EndWith
 
+With AllowedRoutes(6)
+  \methode = "GET"
+  \url = "api/checkactivetoken"
+  \function = @checkValidToken()
+EndWith
+
 ; With AllowedRoutes(2)
 ;   \methode = "POST"
 ;   \url = "api/test"
@@ -73,7 +80,7 @@ EndWith
 ;   \function = @testFile()
 ; EndWith
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 60
-; FirstLine = 35
+; CursorPosition = 64
+; FirstLine = 36
 ; EnableXP
 ; DPIAware

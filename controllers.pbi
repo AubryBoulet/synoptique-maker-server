@@ -250,9 +250,32 @@ Procedure sendNewMail(*datas.dataFunction)
     EndIf
   EndWith
 EndProcedure
+
+Procedure checkValidToken(*datas.dataFunction)
+  Protected token$, decodedtoken$, tokenIsValid = #False
+  With *datas
+    token$ = getRequestArgument(\request$,"token:")
+    If token$
+      decodedtoken$ = decodeToken(token$)
+      ResetList(users())
+      While NextElement(users())
+        If users()\token$ = decodedtoken$
+          tokenIsValid = #True
+          sendMessage(\ClientID,Str(users()\id))
+          Break
+        EndIf
+      Wend
+      If Not tokenIsValid
+        sendError(\ClientID,"Token invalide")
+      EndIf
+    Else
+      sendError(\ClientID,"Token invalide")
+    EndIf
+  EndWith
+EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 224
-; FirstLine = 58
+; CursorPosition = 256
+; FirstLine = 101
 ; Folding = Ex-
 ; EnableXP
 ; DPIAware

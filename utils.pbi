@@ -8,6 +8,7 @@ Declare generateToken(*token.token)
 Declare.s decodeToken(token$)
 Declare sendVerificationMail(mail$,code$)
 Declare.s generateValidationCode(mail$)
+Declare.s getRequestArgument(request$, argument$)
 
 Procedure getContentLenght(request$)
   Protected index, offset
@@ -26,6 +27,17 @@ Procedure.s getContentType(request$)
   If index
     offset = FindString(request$,"/",index)
     index + 14
+    ProcedureReturn Mid(request$,index,offset-index)
+  EndIf
+  ProcedureReturn ""
+EndProcedure
+
+Procedure.s getRequestArgument(request$, argument$)
+  Protected index, offset
+  index = FindString(request$,argument$)
+  If index
+    offset = FindString(request$,Chr(13)+Chr(10),index)
+    index + StringByteLength(argument$,#PB_UTF8)+1
     ProcedureReturn Mid(request$,index,offset-index)
   EndIf
   ProcedureReturn ""
@@ -108,7 +120,7 @@ Procedure.s decodeToken(token$)
   Protected length = 64, decodedToken$, *decodedBuffer 
   *decodedBuffer = AllocateMemory(length)
   Base64Decoder(token$,*decodedBuffer,length)
-  decodedToken$ = PeekS(*decodedBuffer,-1,#PB_UTF8)
+  decodedToken$ = PeekS(*decodedBuffer,64,#PB_UTF8)
   FreeMemory(*decodedBuffer)
   ProcedureReturn decodedToken$
 EndProcedure
@@ -134,8 +146,8 @@ Procedure.s generateValidationCode(mail$)
   ProcedureReturn ""
 EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 116
-; FirstLine = 6
-; Folding = A9
+; CursorPosition = 123
+; FirstLine = 38
+; Folding = F3
 ; EnableXP
 ; DPIAware
