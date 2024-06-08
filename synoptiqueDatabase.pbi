@@ -20,8 +20,19 @@
   EndIf
   ProcedureReturn #False
 EndProcedure
+
+Procedure updatePointPosition(pointId,pointX,pointY)
+  Protected result = #False
+  If connect()
+    SetDatabaseLong(db,0,pointX)
+    SetDatabaseLong(db,1,pointY)
+    SetDatabaseLong(db,2,pointId)
+    result = DatabaseUpdate(db,"UPDATE Point SET x = ?, y = ? WHERE Id = ?")
+  EndIf
+  ProcedureReturn result
+EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 5
+; CursorPosition = 29
 ; Folding = -
 ; EnableXP
 ; DPIAware

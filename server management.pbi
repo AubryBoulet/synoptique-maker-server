@@ -32,6 +32,8 @@ Procedure processRequest(*data.threadData)
     REQ$ = Left(request$,FindString(request$,Chr(13)+Chr(10)))
     index = FindString(REQ$,"/")
     methode$ = Left(REQ$,index-2)
+    Debug REQ$
+    Debug "methode : "+methode$
     REQ$ = Right(REQ$,StringByteLength(REQ$,#PB_UTF8)-(index-1))
     index = FindString(REQ$," ")
     URL$ = Left(REQ$,index-1)
@@ -82,8 +84,8 @@ Procedure processRequest(*data.threadData)
   EndWith
 EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 68
-; FirstLine = 37
+; CursorPosition = 43
+; FirstLine = 21
 ; Folding = -
 ; EnableXP
 ; DPIAware

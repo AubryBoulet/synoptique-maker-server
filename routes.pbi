@@ -45,6 +45,7 @@ Declare sendNewMail(datas)
 Declare checkValidToken(datas)
 Declare listSynoptiques(datas)
 Declare listPoints(datas)
+Declare movePoint(datas)
 
 Global Dim AllowedRoutes.route(20)
 With AllowedRoutes(0)
@@ -110,6 +111,13 @@ With AllowedRoutes(8)
   \requierToken = #True
 EndWith
 
+With AllowedRoutes(9)
+  \methode = "PUT"
+  \url = "api/movepoint"
+  \function = @movePoint()
+  \requierToken = #True
+EndWith
+
 ; 
 ; With AllowedRoutes(3)
 ;   \methode = "POST"
@@ -117,7 +125,7 @@ EndWith
 ;   \function = @testFile()
 ; EndWith
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 108
-; FirstLine = 72
+; CursorPosition = 114
+; FirstLine = 87
 ; EnableXP
 ; DPIAware
