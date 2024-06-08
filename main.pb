@@ -2,6 +2,7 @@
 IncludeFile "init.pbi"
 IncludeFile "routes.pbi"
 IncludeFile "userDatabase.pbi"
+IncludeFile "synoptiqueDatabase.pbi"
 IncludeFile "utils.pbi"
 IncludeFile "controllers.pbi"
 IncludeFile "server management.pbi"
@@ -45,6 +46,6 @@ Else
   MessageRequester(Title$,"Error: can't create the server (port "+Port+" in use ?).",#PB_MessageRequester_Error)
 EndIf
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 13
+; CursorPosition = 4
 ; EnableXP
 ; DPIAware

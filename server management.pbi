@@ -61,6 +61,13 @@ Procedure processRequest(*data.threadData)
       *dataFunction\URL$ = URL$
       UnlockMutex(processMutex)
       LockMutex(dataMutex)
+      If AllowedRoutes(i)\requierToken
+        If Not isValideToken(request$)
+          sendError(\ClientID,"Invalid token")
+          UnlockMutex(dataMutex)
+          ProcedureReturn 
+        EndIf
+      EndIf
       CallCFunctionFast(AllowedRoutes(i)\function,*dataFunction)
     Else
       *dataFunction\URL$ = ErrorPage$
@@ -75,7 +82,7 @@ Procedure processRequest(*data.threadData)
   EndWith
 EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 62
+; CursorPosition = 68
 ; FirstLine = 37
 ; Folding = -
 ; EnableXP

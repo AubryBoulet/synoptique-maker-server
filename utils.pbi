@@ -9,6 +9,7 @@ Declare.s decodeToken(token$)
 Declare sendVerificationMail(mail$,code$)
 Declare.s generateValidationCode(mail$)
 Declare.s getRequestArgument(request$, argument$)
+Declare isValideToken(request$)
 
 Procedure getContentLenght(request$)
   Protected index, offset
@@ -145,9 +146,26 @@ Procedure.s generateValidationCode(mail$)
   EndIf
   ProcedureReturn ""
 EndProcedure
+
+Procedure isValideToken(request$)
+  Protected token$, id
+  token$ = getRequestArgument(request$,"token:")
+  id = Val(getRequestArgument(request$,"clientId:"))
+  If token$ = ""
+    ProcedureReturn #False
+  EndIf
+  token$ = decodeToken(token$)
+  ResetList(users())
+  While NextElement(users())
+    If users()\token$ = token$ And users()\id = id
+      ProcedureReturn #True
+    EndIf
+  Wend
+  ProcedureReturn #False
+EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 123
-; FirstLine = 38
-; Folding = F3
+; CursorPosition = 161
+; FirstLine = 12
+; Folding = Ag-
 ; EnableXP
 ; DPIAware

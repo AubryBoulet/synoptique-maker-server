@@ -96,26 +96,6 @@ Procedure getFile(*datas.dataFunction)
   EndWith
 EndProcedure
 
-Procedure testApi(*datas.dataFunction)
-  Structure test
-    name$
-    count.i
-    zizi.b
-  EndStructure
-  Protected json, t.test
-  With *datas
-    json = extractJson(\request$)
-    If json
-      ExtractJSONStructure(JSONValue(json),@t.test,test)
-      t\name$ = "bah bravo !"
-      t\count = 5
-      t\zizi = #False
-      InsertJSONStructure(JSONValue(json),@t,test)
-      sendClientJson(\ClientID,json)
-    EndIf
-  EndWith
-EndProcedure
-
 Procedure testFile(*datas.dataFunction)
   Protected length, name$
   With *datas
@@ -273,9 +253,31 @@ Procedure checkValidToken(*datas.dataFunction)
     EndIf
   EndWith
 EndProcedure
+
+Procedure listSynoptiques(*datas.dataFunction)
+  Protected id = Val(getRequestArgument(*datas\request$,"clientId:")),NewList syns.synoptiqueList(), json
+  If getSynoptiqueList(id,syns())
+    json = CreateJSON(#PB_Any)
+    If json
+      InsertJSONList(JSONValue(json),syns())
+      sendClientJson(*datas\ClientID,json)
+    EndIf
+  EndIf
+EndProcedure
+
+Procedure listPoints(*datas.dataFunction)
+  Protected synoptiqueId = Val(getRequestArgument(*datas\request$,"synoptiqueid:")), NewList points.pointList(), json
+  If getPointList(synoptiqueId,points())
+    json = CreateJSON(#PB_Any)
+    If json
+      InsertJSONList(JSONValue(json),points())
+      sendClientJson(*datas\ClientID,json)
+    EndIf
+  EndIf
+EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 256
-; FirstLine = 101
-; Folding = Ex-
+; CursorPosition = 268
+; FirstLine = 10
+; Folding = AA-
 ; EnableXP
 ; DPIAware
