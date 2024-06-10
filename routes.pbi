@@ -1,42 +1,4 @@
-﻿Structure dataFunction
-  ClientID.i
-  URL$
-  request$
-  *buffer
-EndStructure
-
-Structure route
-  methode.s
-  url.s
-  function.i
-  requierToken.b
-EndStructure
-
-Structure token
-  token$
-  encodedToken$
-EndStructure
-
-Structure synoptiqueList
-  id.i
-  image.s
-  title.s
-  slug.s
-EndStructure
-
-Structure pointList
-  id.i
-  name.s
-  type.i
-  link.s
-  description.s
-  file.s
-  color.s
-  x.i
-  y.i
-EndStructure
-
-Declare getFile(datas)
+﻿Declare getFile(datas)
 Declare testFile(datas)
 Declare register(datas)
 Declare valideAccount(datas)
@@ -44,8 +6,13 @@ Declare login(datas)
 Declare sendNewMail(datas)
 Declare checkValidToken(datas)
 Declare listSynoptiques(datas)
+Declare loadSynoptique(datas)
+Declare loadSubSynoptique(datas)
 Declare listPoints(datas)
 Declare movePoint(datas)
+Declare createSynoptique(datas)
+Declare createPoint(datas)
+Declare SaveNewImage(datas)
 
 Global Dim AllowedRoutes.route(20)
 With AllowedRoutes(0)
@@ -106,16 +73,51 @@ EndWith
 
 With AllowedRoutes(8)
   \methode = "GET"
+  \url = "api/loadsynoptique"
+  \function = @loadSynoptique()
+  \requierToken = #True
+EndWith
+
+With AllowedRoutes(9)
+  \methode = "GET"
+  \url = "api/loadsubsynoptique"
+  \function = @loadSubSynoptique()
+  \requierToken = #True
+EndWith
+
+With AllowedRoutes(10)
+  \methode = "GET"
   \url = "api/listpoints"
   \function = @listPoints()
   \requierToken = #True
 EndWith
 
-With AllowedRoutes(9)
+With AllowedRoutes(11)
   \methode = "PUT"
   \url = "api/movepoint"
   \function = @movePoint()
   \requierToken = #True
+EndWith
+
+With AllowedRoutes(12)
+  \methode = "POST"
+  \url = "api/createsynoptique"
+  \function = @createSynoptique()
+  \requierToken = #True
+EndWith
+
+With AllowedRoutes(13)
+  \methode = "POST"
+  \url = "api/createpoint"
+  \function = @createPoint()
+  \requierToken = #True
+EndWith
+
+With AllowedRoutes(14)
+  \methode = "POST"
+  \url = "api/sendimage"
+  \function = @SaveNewImage()
+  \requierToken = #False
 EndWith
 
 ; 
@@ -126,6 +128,6 @@ EndWith
 ; EndWith
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
 ; CursorPosition = 114
-; FirstLine = 87
+; FirstLine = 89
 ; EnableXP
 ; DPIAware

@@ -4,17 +4,17 @@ Declare BuildRequestHeader(*Buffer, DataLength, ContentType$, Code$)
 
 Procedure BuildRequestHeader(*Buffer, DataLength, ContentType$, Code$)
   Protected EOL$ = Chr(13)+Chr(10), Length
-  Debug "start : "+*Buffer
   Length = PokeS(*Buffer, Code$+EOL$, -1, #PB_UTF8) : *Buffer+Length
   Length = PokeS(*Buffer, "Date: "+FormatDate("%dd %mm %yyyy %hh:%ii:%ss",Date())+" GMT"+EOL$, -1, #PB_UTF8) : *Buffer+Length
   Length = PokeS(*Buffer, "Server: Synoptique Maker"+EOL$, -1, #PB_UTF8)      : *Buffer+Length
   Length = PokeS(*Buffer, "Access-Control-Allow-Origin: *"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
-  Length = PokeS(*Buffer, "Access-Control-Allow-Headers: *"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
-  Length = PokeS(*Buffer, "Access-Control-Allow-Methods: *"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
+  Length = PokeS(*Buffer, "Access-Control-Allow-Headers: token, clientId, Content-Type, Content-Name"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
+  Length = PokeS(*Buffer, "Access-Control-Allow-Methods: GET, POST, PUT, DELETE"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
+;   Length = PokeS(*Buffer, "Accept-Post: */*"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
+;   Length = PokeS(*Buffer, "Accept: */*"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
   Length = PokeS(*Buffer, "Content-Length: "+Str(DataLength)+EOL$, -1, #PB_UTF8)    : *Buffer+Length
   Length = PokeS(*Buffer, "Content-Type: "+ContentType$+EOL$, -1, #PB_UTF8)         : *Buffer+Length
   Length = PokeS(*Buffer, #CRLF$, -1, #PB_UTF8)                                     : *Buffer+Length
-  Debug "end : "+*Buffer
   ; Length = PokeS(*Buffer, "Accept-Ranges: bytes"+EOL$, -1, #PB_UTF8) : *Buffer+Length
   ; Length = PokeS(*Buffer, "Connection: close"+EOL$, -1, #PB_UTF8) : *Buffer+Length
   ProcedureReturn *Buffer
@@ -55,7 +55,7 @@ Procedure sendClientFile(ClientID, RequestedFile$)
     EndSelect
     FileLength = Lof(file)
     
-    *FileBuffer   = AllocateMemory(FileLength+250)
+    *FileBuffer   = AllocateMemory(FileLength+300)
     *BufferOffset = BuildRequestHeader(*FileBuffer, FileLength, ContentType$, "HTTP/1.1 200 OK")
     
     ReadData(file, *BufferOffset, FileLength)
@@ -67,7 +67,7 @@ EndProcedure
 
 Procedure sendClientJson(ClientID,json)
   Protected ContentType$ = "application/json", json$ = ComposeJSON(json), length = StringByteLength(json$,#PB_UTF8), *fileBuffer, *BufferOffset
-  *fileBuffer = AllocateMemory(length+250)
+  *fileBuffer = AllocateMemory(length+300)
   *BufferOffset = BuildRequestHeader(*FileBuffer, length, ContentType$, "HTTP/1.1 200 OK")
   PokeS(*BufferOffset,json$,-1,#PB_UTF8)
   SendNetworkData(ClientID,*fileBuffer,*BufferOffset-*FileBuffer+length)
@@ -76,7 +76,7 @@ Procedure sendClientJson(ClientID,json)
 EndProcedure
 
 Procedure sendError(ClientID,message$)
-  Protected length = StringByteLength(message$,#PB_UTF8)+2, *buffer = AllocateMemory(length+250), *bufferOffset
+  Protected length = StringByteLength(message$,#PB_UTF8)+2, *buffer = AllocateMemory(length+300), *bufferOffset
   *bufferOffset = BuildRequestHeader(*buffer,length,"application/json","HTTP/1.1 403 Forbidden")
   PokeS(*bufferOffset,Chr(34)+message$+Chr(34),-1,#PB_UTF8)
   SendNetworkData(ClientID,*buffer,*bufferOffset-*buffer+length)
@@ -84,7 +84,7 @@ Procedure sendError(ClientID,message$)
 EndProcedure
 
 Procedure sendMessage(ClientID,message$)
-  Protected length = StringByteLength(message$,#PB_UTF8)+2, *buffer = AllocateMemory(length+250), *bufferOffset
+  Protected length = StringByteLength(message$,#PB_UTF8)+2, *buffer = AllocateMemory(length+300), *bufferOffset
   *bufferOffset = BuildRequestHeader(*buffer,length,"application/json","HTTP/1.1 200 OK")
   PokeS(*bufferOffset,Chr(34)+message$+Chr(34),-1,#PB_UTF8)
   SendNetworkData(ClientID,*buffer,*bufferOffset-*buffer+length)
@@ -98,7 +98,7 @@ Procedure getFile(*datas.dataFunction)
   EndWith
 EndProcedure
 
-Procedure testFile(*datas.dataFunction)
+Procedure SaveNewImage(*datas.dataFunction)
   Protected length, name$
   With *datas
     length = getContentLenght(\request$)
@@ -257,13 +257,41 @@ Procedure checkValidToken(*datas.dataFunction)
 EndProcedure
 
 Procedure listSynoptiques(*datas.dataFunction)
-  Protected id = Val(getRequestArgument(*datas\request$,"clientId:")),NewList syns.synoptiqueList(), json
+  Protected id = Val(getRequestArgument(*datas\request$,"clientId:")), NewList syns.synoptiqueList(), json
   If getSynoptiqueList(id,syns())
     json = CreateJSON(#PB_Any)
     If json
       InsertJSONList(JSONValue(json),syns())
       sendClientJson(*datas\ClientID,json)
     EndIf
+  Else
+    sendError(*datas\ClientID,"not found")
+  EndIf
+EndProcedure
+
+Procedure loadSynoptique(*datas.dataFunction)
+  Protected id = Val(getRequestArgument(*datas\request$,"synoptiqueId:")), synoptique.synoptiqueList, json
+  If getSynoptique(id,@synoptique)
+    json = CreateJSON(#PB_Any)
+    If json
+      InsertJSONStructure(JSONValue(json),@synoptique,synoptiqueList)
+      sendClientJson(*datas\ClientID,json)
+    EndIf
+  Else
+    sendError(*datas\ClientID,"not found")
+  EndIf
+EndProcedure
+
+Procedure loadSubSynoptique(*datas.dataFunction)
+  Protected id = Val(getRequestArgument(*datas\request$,"synoptiqueId:")), NewList syns.synoptiqueList(), json
+  If getSubSynoptique(id,syns())
+    json = CreateJSON(#PB_Any)
+    If json
+      InsertJSONList(JSONValue(json),syns())
+      sendClientJson(*datas\ClientID,json)
+    EndIf
+  Else
+    sendError(*datas\ClientID,"not found")
   EndIf
 EndProcedure
 
@@ -300,8 +328,41 @@ Procedure movePoint(*datas.dataFunction)
     EndIf
   EndWith
 EndProcedure
+
+Procedure createSynoptique(*datas.dataFunction)
+  Protected datas.dataSynoptique, json, result
+  With *datas
+    json = extractJson(\request$)
+    If json
+      ExtractJSONStructure(JSONValue(json),@datas,dataSynoptique)
+      FreeJSON(json)
+      result = addSynoptique(datas)
+      If result
+        sendMessage(\ClientID,Str(result))
+        ProcedureReturn 
+      EndIf
+    EndIf
+    sendError(\ClientID,"Une erreur est survenue, veuillez réessayer plus tard")
+  EndWith
+EndProcedure
+
+Procedure createPoint(*datas.dataFunction)
+  Protected datas.dataPoint, json, result
+  With *datas
+    json = extractJson(\request$)
+    If json
+      ExtractJSONStructure(JSONValue(json),@datas,dataPoint)
+      FreeJSON(json)
+      result = addPoint(datas)
+      If result
+        sendMessage(\ClientID,Str(result))
+      EndIf
+    EndIf
+    sendError(\ClientID,"Une erreur est survenue, veuillez réessayer plus tard")
+  EndWith
+EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 16
-; Folding = fI9
+; CursorPosition = 20
+; Folding = DBA+
 ; EnableXP
 ; DPIAware

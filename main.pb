@@ -46,6 +46,6 @@ Else
   MessageRequester(Title$,"Error: can't create the server (port "+Port+" in use ?).",#PB_MessageRequester_Error)
 EndIf
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 4
+; CursorPosition = 15
 ; EnableXP
 ; DPIAware

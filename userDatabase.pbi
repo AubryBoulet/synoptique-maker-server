@@ -78,26 +78,9 @@ Procedure.s getValidationCode(mail$)
   ProcedureReturn result$
 EndProcedure
 
-Procedure getSynoptiqueList(userId, List result.synoptiqueList())
-  If connect()
-    SetDatabaseLong(db,0,userId)
-    DatabaseQuery(db,"SELECT Id, Image, Title, Slug FROM Synoptique WHERE User_Id = ? AND Main_Synoptique_Id = 0")
-    While NextDatabaseRow(db)
-      AddElement(result())
-      With result()
-        \id = GetDatabaseLong(db,0)
-        \image = GetDatabaseString(db,1)
-        \title = GetDatabaseString(db,2)
-        \slug = GetDatabaseString(db,3)
-      EndWith
-    Wend
-    FinishDatabaseQuery(db)
-    ProcedureReturn #True
-  EndIf
-  ProcedureReturn #False
-EndProcedure
+
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 86
+; CursorPosition = 80
 ; Folding = B-
 ; EnableXP
 ; DPIAware

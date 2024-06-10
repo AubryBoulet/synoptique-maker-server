@@ -1,7 +1,7 @@
 function handleChoseFileClick(e) {
     const file = e.currentTarget.files[0]
     console.log(file)
-    fetch("api/testfile",{
+    fetch("api/sendimage",{
         method: "POST",
         headers: {
             "Content-Name": file.name

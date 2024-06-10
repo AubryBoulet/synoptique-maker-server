@@ -18,9 +18,11 @@ Procedure newNetworkData(ClientID)
       Break
     EndIf
   ForEver
+  Debug "buffer size : "+DataLength
   *param.threadData = AllocateMemory(SizeOf(threadData))
   *param\ClientID = ClientID
   *param\buffer = *buffer
+  Debug PeekS(*buffer,-1,#PB_UTF8)
   CreateThread(@processRequest(),*param)
 EndProcedure
 
@@ -32,8 +34,13 @@ Procedure processRequest(*data.threadData)
     REQ$ = Left(request$,FindString(request$,Chr(13)+Chr(10)))
     index = FindString(REQ$,"/")
     methode$ = Left(REQ$,index-2)
-    Debug REQ$
-    Debug "methode : "+methode$
+;     If methode$ = "OPTIONS"
+;       methode$ = getRequestArgument(request$,"Access-Control-Request-Method:")
+;       Debug methode$
+;       Debug "request : " + request$
+;     EndIf
+;     Debug REQ$
+;     Debug "methode : "+methode$
     REQ$ = Right(REQ$,StringByteLength(REQ$,#PB_UTF8)-(index-1))
     index = FindString(REQ$," ")
     URL$ = Left(REQ$,index-1)
@@ -71,6 +78,10 @@ Procedure processRequest(*data.threadData)
         EndIf
       EndIf
       CallCFunctionFast(AllowedRoutes(i)\function,*dataFunction)
+    ElseIf methode$ = "OPTIONS"
+      UnlockMutex(processMutex)
+      LockMutex(dataMutex)
+      sendMessage(\ClientID,"ok")
     Else
       *dataFunction\URL$ = ErrorPage$
       UnlockMutex(processMutex)
@@ -84,8 +95,8 @@ Procedure processRequest(*data.threadData)
   EndWith
 EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 43
-; FirstLine = 21
+; CursorPosition = 39
+; FirstLine = 8
 ; Folding = -
 ; EnableXP
 ; DPIAware
