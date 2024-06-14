@@ -15,6 +15,9 @@ Global dbName$
 Global dbUser$ 
 Global dbPassword$ 
 Global db
+Global emailUser$
+Global emailPassword$
+Global srvUrl$
 
 Structure users ;{ structure declaration
   id.i
@@ -90,6 +93,9 @@ Procedure loadSettings()
     dbName$ = ReadPreferenceString("dbName","")
     dbUser$ = ReadPreferenceString("dbUser","")
     dbPassword$ = ReadPreferenceString("dbPassword","")
+    emailUser$ = ReadPreferenceString("email","")
+    emailPassword$ = ReadPreferenceString("emailPassword","")
+    srvUrl$ = ReadPreferenceString("srvUrl","")
     ProcedureReturn #True
   EndIf
   ProcedureReturn #False
@@ -105,8 +111,8 @@ Procedure connect()
   ProcedureReturn #False
 EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 76
-; FirstLine = 40
+; CursorPosition = 96
+; FirstLine = 73
 ; Folding = -
 ; EnableXP
 ; DPIAware

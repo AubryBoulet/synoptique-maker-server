@@ -117,7 +117,7 @@ With AllowedRoutes(14)
   \methode = "POST"
   \url = "api/sendimage"
   \function = @SaveNewImage()
-  \requierToken = #False
+  \requierToken = #True
 EndWith
 
 ; 
@@ -127,7 +127,7 @@ EndWith
 ;   \function = @testFile()
 ; EndWith
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 114
-; FirstLine = 89
+; CursorPosition = 119
+; FirstLine = 85
 ; EnableXP
 ; DPIAware

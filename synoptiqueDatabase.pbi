@@ -101,6 +101,7 @@ Procedure addSynoptique(*datas.dataSynoptique)
       SetDatabaseString(db,3,\Title$)
       SetDatabaseString(db,4,\Slug$)
       result = DatabaseUpdate(db,"INSERT INTO Synoptique (User_Id, Main_Synoptique_Id, Image, Title, Slug) VALUES (?,?,?,?,?)")
+      Debug DatabaseError()
       If result
         DatabaseQuery(db,"SELECT LAST_INSERT_ID()")
         If NextDatabaseRow(db)
@@ -144,8 +145,8 @@ Procedure addPoint(*datas.dataPoint)
   ProcedureReturn result
 EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 135
-; FirstLine = 31
-; Folding = w-
+; CursorPosition = 109
+; FirstLine = 4
+; Folding = w+
 ; EnableXP
 ; DPIAware

@@ -8,15 +8,11 @@ Procedure BuildRequestHeader(*Buffer, DataLength, ContentType$, Code$)
   Length = PokeS(*Buffer, "Date: "+FormatDate("%dd %mm %yyyy %hh:%ii:%ss",Date())+" GMT"+EOL$, -1, #PB_UTF8) : *Buffer+Length
   Length = PokeS(*Buffer, "Server: Synoptique Maker"+EOL$, -1, #PB_UTF8)      : *Buffer+Length
   Length = PokeS(*Buffer, "Access-Control-Allow-Origin: *"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
-  Length = PokeS(*Buffer, "Access-Control-Allow-Headers: token, clientId, Content-Type, Content-Name"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
+  Length = PokeS(*Buffer, "Access-Control-Allow-Headers: token, clientId, Content-Type, Content-Name, synoptiqueid"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
   Length = PokeS(*Buffer, "Access-Control-Allow-Methods: GET, POST, PUT, DELETE"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
-;   Length = PokeS(*Buffer, "Accept-Post: */*"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
-;   Length = PokeS(*Buffer, "Accept: */*"+EOL$, -1, #PB_UTF8)         : *Buffer+Length
   Length = PokeS(*Buffer, "Content-Length: "+Str(DataLength)+EOL$, -1, #PB_UTF8)    : *Buffer+Length
   Length = PokeS(*Buffer, "Content-Type: "+ContentType$+EOL$, -1, #PB_UTF8)         : *Buffer+Length
   Length = PokeS(*Buffer, #CRLF$, -1, #PB_UTF8)                                     : *Buffer+Length
-  ; Length = PokeS(*Buffer, "Accept-Ranges: bytes"+EOL$, -1, #PB_UTF8) : *Buffer+Length
-  ; Length = PokeS(*Buffer, "Connection: close"+EOL$, -1, #PB_UTF8) : *Buffer+Length
   ProcedureReturn *Buffer
 EndProcedure
 
@@ -55,7 +51,7 @@ Procedure sendClientFile(ClientID, RequestedFile$)
     EndSelect
     FileLength = Lof(file)
     
-    *FileBuffer   = AllocateMemory(FileLength+300)
+    *FileBuffer   = AllocateMemory(FileLength+312)
     *BufferOffset = BuildRequestHeader(*FileBuffer, FileLength, ContentType$, "HTTP/1.1 200 OK")
     
     ReadData(file, *BufferOffset, FileLength)
@@ -67,7 +63,7 @@ EndProcedure
 
 Procedure sendClientJson(ClientID,json)
   Protected ContentType$ = "application/json", json$ = ComposeJSON(json), length = StringByteLength(json$,#PB_UTF8), *fileBuffer, *BufferOffset
-  *fileBuffer = AllocateMemory(length+300)
+  *fileBuffer = AllocateMemory(length+312)
   *BufferOffset = BuildRequestHeader(*FileBuffer, length, ContentType$, "HTTP/1.1 200 OK")
   PokeS(*BufferOffset,json$,-1,#PB_UTF8)
   SendNetworkData(ClientID,*fileBuffer,*BufferOffset-*FileBuffer+length)
@@ -76,7 +72,7 @@ Procedure sendClientJson(ClientID,json)
 EndProcedure
 
 Procedure sendError(ClientID,message$)
-  Protected length = StringByteLength(message$,#PB_UTF8)+2, *buffer = AllocateMemory(length+300), *bufferOffset
+  Protected length = StringByteLength(message$,#PB_UTF8)+2, *buffer = AllocateMemory(length+312), *bufferOffset
   *bufferOffset = BuildRequestHeader(*buffer,length,"application/json","HTTP/1.1 403 Forbidden")
   PokeS(*bufferOffset,Chr(34)+message$+Chr(34),-1,#PB_UTF8)
   SendNetworkData(ClientID,*buffer,*bufferOffset-*buffer+length)
@@ -84,7 +80,7 @@ Procedure sendError(ClientID,message$)
 EndProcedure
 
 Procedure sendMessage(ClientID,message$)
-  Protected length = StringByteLength(message$,#PB_UTF8)+2, *buffer = AllocateMemory(length+300), *bufferOffset
+  Protected length = StringByteLength(message$,#PB_UTF8)+2, *buffer = AllocateMemory(length+312), *bufferOffset
   *bufferOffset = BuildRequestHeader(*buffer,length,"application/json","HTTP/1.1 200 OK")
   PokeS(*bufferOffset,Chr(34)+message$+Chr(34),-1,#PB_UTF8)
   SendNetworkData(ClientID,*buffer,*bufferOffset-*buffer+length)
@@ -103,9 +99,9 @@ Procedure SaveNewImage(*datas.dataFunction)
   With *datas
     length = getContentLenght(\request$)
     If length
-      If getContentType(\request$) = "image"
+      If getContentType(Mid(\request$,FindString(\request$,#CRLF$+#CRLF$))) = "image"
         name$ = getImageFromRequest(\buffer,length,\request$)
-        Debug name$
+        sendMessage(\ClientID,srvUrl$+"assets/images/"+name$)
       EndIf
     EndIf
   EndWith
@@ -362,7 +358,8 @@ Procedure createPoint(*datas.dataFunction)
   EndWith
 EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 20
-; Folding = DBA+
+; CursorPosition = 173
+; FirstLine = 7
+; Folding = QAg+
 ; EnableXP
 ; DPIAware

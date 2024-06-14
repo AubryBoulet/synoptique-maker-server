@@ -23,10 +23,10 @@ If CreateNetworkServer(0, Port, #PB_Network_IPv4 | #PB_Network_TCP, "127.0.0.1")
           ClientID = EventClient()
           Select ServerEvent        
             Case #PB_NetworkEvent_Connect  ; When a new client has been connected...
-              ;Debug "New client connected"
+;               Debug "New client connected"
               
             Case #PB_NetworkEvent_Disconnect  ; When a client has closed the connection...
-              ;Debug "Client disconnected"
+;               Debug "Client disconnected"
       
             Case #PB_NetworkEvent_Data 
               newNetworkData(ClientID)
@@ -46,6 +46,7 @@ Else
   MessageRequester(Title$,"Error: can't create the server (port "+Port+" in use ?).",#PB_MessageRequester_Error)
 EndIf
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 15
+; CursorPosition = 31
+; FirstLine = 8
 ; EnableXP
 ; DPIAware

@@ -89,14 +89,14 @@ EndProcedure
 
 Procedure.s getImageFromRequest(*buffer, length, request$)
   Protected name$, img, offset
-  offset = FindString(request$,#CRLF$ + #CRLF$)
+  offset = FindString(request$,#CRLF$ + #CRLF$,FindString(request$,#CRLF$ + #CRLF$)+2)
   If offset
     offset + 3
     img = CatchImage(#PB_Any,*buffer+offset,length)
     If img
       name$ = Str(Date())+getImageNameFromRequest(request$)+".png"
       If name$
-        SaveImage(img,name$,#PB_ImagePlugin_PNG)
+        SaveImage(img,"WWW/assets/images/"+name$,#PB_ImagePlugin_PNG)
         FreeImage(img)
         ProcedureReturn name$
       EndIf
@@ -131,7 +131,7 @@ Procedure sendVerificationMail(mail$,code$)
   If CreateMail(0,"synoptiquemaker@gmail.com","Code de validation")
     AddMailRecipient(0,mail$,#PB_Mail_To)
     SetMailBody(0,"Votre code de validation pour activer votre compte SynoptiqueMaker est : "+code$)
-    ProcedureReturn  SendMail(0,"smtp.gmail.com",465,#PB_Mail_UseSSL | #PB_Mail_UseSMTPS | #PB_Mail_Asynchronous,"synoptiquemaker@gmail.com","gjnzglwozcnhldth ")
+    ProcedureReturn  SendMail(0,"smtp.gmail.com",465,#PB_Mail_UseSSL | #PB_Mail_UseSMTPS | #PB_Mail_Asynchronous,emailUser$,emailPassword$);"gjnzglwozcnhldth ")
   EndIf
   ProcedureReturn #False
 EndProcedure
@@ -164,8 +164,8 @@ Procedure isValideToken(request$)
   ProcedureReturn #False
 EndProcedure
 ; IDE Options = PureBasic 6.10 LTS (Linux - x64)
-; CursorPosition = 161
-; FirstLine = 12
-; Folding = Ag-
+; CursorPosition = 133
+; FirstLine = 5
+; Folding = AI-
 ; EnableXP
 ; DPIAware
