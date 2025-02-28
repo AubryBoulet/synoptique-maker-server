@@ -131,7 +131,7 @@ Procedure sendVerificationMail(mail$,code$)
   If CreateMail(0,"synoptiquemaker@gmail.com","Code de validation")
     AddMailRecipient(0,mail$,#PB_Mail_To)
     SetMailBody(0,"Votre code de validation pour activer votre compte SynoptiqueMaker est : "+code$)
-    ProcedureReturn  SendMail(0,"smtp.gmail.com",465,#PB_Mail_UseSSL | #PB_Mail_UseSMTPS | #PB_Mail_Asynchronous,emailUser$,emailPassword$);"gjnzglwozcnhldth ")
+    ProcedureReturn  SendMail(0,"smtp.gmail.com",465,#PB_Mail_UseSSL | #PB_Mail_UseSMTPS | #PB_Mail_Asynchronous,emailUser$,emailPassword$)
   EndIf
   ProcedureReturn #False
 EndProcedure
